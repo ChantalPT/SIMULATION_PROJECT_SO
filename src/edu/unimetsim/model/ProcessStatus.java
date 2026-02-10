@@ -8,6 +8,12 @@ package edu.unimetsim.model;
  *
  * @author pinto
  */
-public class ProcessStatus {
-    
+public enum ProcessStatus {
+    NEW,
+    READY,
+    RUNNING,
+    BLOCKED,
+    TERMINATED,
+    READY_SUSPENDED,   
+    BLOCKED_SUSPENDED
 }

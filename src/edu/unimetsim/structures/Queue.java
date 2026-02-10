@@ -51,4 +51,8 @@ public class Queue<T> {
         size--;
         return data;
     }
+    
+    public int getSize() {
+        return size;
+    }
 }

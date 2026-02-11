@@ -43,7 +43,50 @@ public class ProcessManager {
             System.out.println("[Clock " + globalClock + "] (DISCO) - Memoria llena: " + process.getName());
         }
     }
+    
+    
 
+    public void dispatch() { //De la cola de listos a la CPU.
+        // Solo se despacha si la CPU está libre y hay alguien esperando en RAM
+        if (currentProcess == null && !readyQueue.isEmpty()) {
+            PCB next = readyQueue.dequeue();
+            next.setStatus(ProcessStatus.RUNNING);
+            currentProcess = next;
+            System.out.println("[Clock " + globalClock + "] (CPU) - Dispatch: " + next.getName());
+        }
+    }
+
+    public void runCycle() {
+        globalClock++; 
+        if (currentProcess != null) { //Se ejecuta 1 ciclo si hay un proceso en el CPU
+            currentProcess.executeCycle();
+            if (currentProcess.isFinished()) {
+                currentProcess.setStatus(ProcessStatus.TERMINATED);
+                System.out.println("[Clock " + globalClock + "] Terminado: " + currentProcess.getName());             
+                currentProcess = null;
+                checkSwapIn(); //Se checkea si existe un proceso que quiera entrar.
+            }
+        }
+        if (currentProcess == null) {
+            dispatch();
+        }
+    }
+
+    //Verificar que haya espacio en la RAM para voler a ejecutar procesos suspendidos
+    private void checkSwapIn() { 
+        // Verificar espacio actual
+        int processesInRam = readyQueue.getSize() + blockedQueue.getSize() + (currentProcess != null ? 1 : 0);
+        while (processesInRam < maxMemorySize && !queueReadySuspended.isEmpty()) {
+            // Traer del disco
+            PCB processFromDisk = queueReadySuspended.dequeue();                 
+            processFromDisk.setStatus(ProcessStatus.READY); //Cambiar el estatus 
+            readyQueue.enqueue(processFromDisk);       
+            processesInRam++; // Actualizar contador 
+            System.out.println("[Clock " + globalClock + "] (Disco->RAM) - Swap in: " + processFromDisk.getName());
+        }
+    }
+
+    //Getters y Setters.
     public Queue<PCB> getReadyQueue() {
         return readyQueue;
     }

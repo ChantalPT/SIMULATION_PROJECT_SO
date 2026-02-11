@@ -21,6 +21,7 @@ public class PCB {
     private int arrivalTime;        //Ciclo en el que llegó al sistema.
     private int burstTime;      // Para calcular el RST (tiempo más corto)
     private int remainingTime;      // Tiempo restante de ejecución
+    private int updateIoWait; // Ciclos que debe esperar en bloqueo
 
     public PCB(String name, int totalInstructions, int priority, int deadline, int arrivalTime) {
         this.id = idCounter++;
@@ -43,31 +44,67 @@ public class PCB {
         }
     }
 
-    public boolean isFinished() {
+    public void decreaseIoWait() { //Reducir tiempo de espera 1 ciclo
+    if (updateIoWait > 0) {
+        updateIoWait--;
+        }
+    }
+    
+     public boolean isFinished() {
         return remainingTime <= 0;
     }
     
     //Getters y Setters.
-    public int getId() { return id; }
-    public String getName() { return name; }
+    public int getId() {
+        return id; 
+    }
+    public String getName() { 
+        return name; 
+    }
     
-    public ProcessStatus getStatus() { return status; }
-    public void setStatus(ProcessStatus status) { this.status = status; }
+    public ProcessStatus getStatus() { 
+        return status; 
+    }
+    public void setStatus(ProcessStatus status) { 
+        this.status = status; 
+    }
 
-    public int getPriority() { return priority; }
-    public void setPriority(int priority) { this.priority = priority; }
+    public int getPriority() { 
+        return priority; 
+    }
+    public void setPriority(int priority) { 
+        this.priority = priority; 
+    }
 
-    public int getDeadline() { return deadline; }
+    public int getDeadline() { 
+        return deadline; 
+    }
     
-    public int getProgramCounter() { return programCounter; }
-    public int getMar() { return mar; }
+    public int getProgramCounter() {
+        return programCounter; 
+    }
+    public int getMar() { 
+        return mar; 
+    }
     
-    public int getRemainingTime() { return remainingTime; }
-    public int getArrivalTime() { return arrivalTime; }
+    public int getRemainingTime() { 
+        return remainingTime; 
+    }
+    public int getArrivalTime() { 
+        return arrivalTime; 
+    }
+    
+        public int getIoWait() { 
+        return updateIoWait; 
+    }
+    
+    public void setIoWait(int ioWait) { 
+        this.updateIoWait = ioWait; 
+    }
     
     @Override
     public String toString() {
-        return "PCB{ID=" + id + ", Name=" + name + ", Status=" + status + "}";
+        return "PCB{ID =" + id + ", Name =" + name + ", Status =" + status + "}";
     }
 }
 

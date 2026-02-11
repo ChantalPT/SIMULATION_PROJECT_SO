@@ -30,6 +30,7 @@ public class ProcessManager {
         this.queueReadySuspended = new Queue<>();
         this.blockedSuspendedQueue = new LinkedList<>();
     }
+    
     //El proceso va a la RAM o al disco (ready o readySuspended)
     public void addProcess(PCB process){
         int processRam = readyQueue.getSize() + blockedQueue.getSize() + (currentProcess != null ? 1:0);
@@ -44,8 +45,6 @@ public class ProcessManager {
         }
     }
     
-    
-
     public void dispatch() { //De la cola de listos a la CPU.
         // Solo se despacha si la CPU está libre y hay alguien esperando en RAM
         if (currentProcess == null && !readyQueue.isEmpty()) {
@@ -142,6 +141,4 @@ public class ProcessManager {
     public void setCurrentProcess(PCB currentProcess) {
         this.currentProcess = currentProcess;
     }
-    
-    
 }

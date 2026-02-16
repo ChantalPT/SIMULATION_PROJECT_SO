@@ -58,6 +58,7 @@ public class ProcessManager {
 
     public void runCycle() {
         globalClock++; 
+        checkBlocked();
         if (currentProcess != null) { //Se ejecuta 1 ciclo si hay un proceso en el CPU
             currentProcess.executeCycle();
             if (currentProcess.isFinished()) {
@@ -68,6 +69,20 @@ public class ProcessManager {
             }
         }
         if (currentProcess == null) {
+            dispatch();
+        }
+    }
+    
+    // Enviar el proceso actual a la cola de bloqueados porque pidió I/O
+    public void blockCurrentProcess(int timeToWait) {
+        if (currentProcess != null) {
+            currentProcess.setIoWait(timeToWait); //tiempo de bloqueo
+            currentProcess.setStatus(ProcessStatus.BLOCKED);
+            blockedQueue.add(currentProcess); 
+            
+            System.out.println("[Reloj " + globalClock + "] (CPU -> Bloqueado) - Esperando I/O: " + currentProcess.getName());
+
+            currentProcess = null; //Se libera el CPU y va el siguiente
             dispatch();
         }
     }

@@ -5,6 +5,7 @@
 package edu.unimetsim.model;
 
 import edu.unimetsim.structures.LinkedList;
+import edu.unimetsim.structures.Node;
 import edu.unimetsim.structures.Queue;
 
 /**
@@ -37,11 +38,11 @@ public class ProcessManager {
         if (processRam < maxMemorySize) {
             process.setStatus(ProcessStatus.READY);
             readyQueue.enqueue(process);
-            System.out.println("[Clock " + globalClock + "] (RAM) - Nuevo Proceso: " + process.getName());
+            System.out.println("[Reloj " + globalClock + "] (RAM) - Nuevo Proceso: " + process.getName());
         } else{
             process.setStatus(ProcessStatus.READY_SUSPENDED);
             queueReadySuspended.enqueue(process);
-            System.out.println("[Clock " + globalClock + "] (DISCO) - Memoria llena: " + process.getName());
+            System.out.println("[Reloj " + globalClock + "] (DISCO) - Memoria llena: " + process.getName());
         }
     }
     
@@ -51,7 +52,7 @@ public class ProcessManager {
             PCB next = readyQueue.dequeue();
             next.setStatus(ProcessStatus.RUNNING);
             currentProcess = next;
-            System.out.println("[Clock " + globalClock + "] (CPU) - Dispatch: " + next.getName());
+            System.out.println("[Reloj " + globalClock + "] (CPU) - Dispatch: " + next.getName());
         }
     }
 
@@ -61,7 +62,7 @@ public class ProcessManager {
             currentProcess.executeCycle();
             if (currentProcess.isFinished()) {
                 currentProcess.setStatus(ProcessStatus.TERMINATED);
-                System.out.println("[Clock " + globalClock + "] Terminado: " + currentProcess.getName());             
+                System.out.println("[Reloj " + globalClock + "] Terminado: " + currentProcess.getName());             
                 currentProcess = null;
                 checkSwapIn(); //Se checkea si existe un proceso que quiera entrar.
             }
@@ -81,7 +82,52 @@ public class ProcessManager {
             processFromDisk.setStatus(ProcessStatus.READY); //Cambiar el estatus 
             readyQueue.enqueue(processFromDisk);       
             processesInRam++; // Actualizar contador 
-            System.out.println("[Clock " + globalClock + "] (Disco->RAM) - Swap in: " + processFromDisk.getName());
+            System.out.println("[Reloj " + globalClock + "] (Disco->RAM) - Swap in: " + processFromDisk.getName());
+        }
+    }
+
+    //Revisar que los procesos  que estaban esperando en I/O hayan terminado
+    private void checkBlocked() {
+        //Revisar Bloqueados en RAM
+        Queue<PCB> readyToUnblock = new Queue<>(); //cola temporal para guardar los procesos que ya terminaron
+        Node<PCB> current = blockedQueue.getHead(); 
+        while (current != null) { //Recorrer los bloqueados hasta que no hayan más
+            PCB p = current.getData();
+            p.decreaseIoWait(); 
+            if (p.getIoWait() <= 0) { //Si el Tiemp. espera llega a 0, se crea una cola temporal para sacarlo
+                readyToUnblock.enqueue(p); 
+            }
+            current = current.getNext(); 
+        }
+        // Sacamos de la cola de bloqueados y movemos a  la cola de listos
+        while (!readyToUnblock.isEmpty()) {
+            PCB p = readyToUnblock.dequeue();
+            blockedQueue.remove(p);
+            
+            p.setStatus(ProcessStatus.READY);
+            readyQueue.enqueue(p);
+            System.out.println("[Reloj " + globalClock + "] (RAM) - Desbloqueado: " + p.getName());
+        }
+
+        //Revisar Bloqueados en Disco 
+        Queue<PCB> readyToUnblockSuspended = new Queue<>();  //cola temporal de suspendidos   
+        Node<PCB> currentSuspended = blockedSuspendedQueue.getHead();
+        while (currentSuspended != null) { //
+            PCB p = currentSuspended.getData();
+            p.decreaseIoWait();
+            if (p.getIoWait() <= 0) { //Tiempo = 0, 
+                readyToUnblockSuspended.enqueue(p);
+            }
+            currentSuspended = currentSuspended.getNext();
+        }
+        while (!readyToUnblockSuspended.isEmpty()) {
+            PCB p = readyToUnblockSuspended.dequeue(); //se mueve a la cola de listos del disco
+            blockedSuspendedQueue.remove(p);
+            
+            //Como esta en el disco, pasa a Ready_Suspended
+            p.setStatus(ProcessStatus.READY_SUSPENDED);
+            queueReadySuspended.enqueue(p);
+            System.out.println("[Reloj " + globalClock + "] (Disco) - Desbloqueado: " + p.getName());
         }
     }
 

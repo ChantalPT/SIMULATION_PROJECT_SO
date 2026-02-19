@@ -10,7 +10,6 @@ package edu.unimetsim.model;
  */
 
 public class SystemClock extends Thread {
-    
     private ProcessManager kernel;
     private int speedMs; //Velocidad en milisegundos 
     private boolean running;
@@ -36,7 +35,12 @@ public class SystemClock extends Thread {
         }
         System.out.println("Reloj detenido");
     }
-
+    
+    public void setSpeedMs(int newSpeedMs) { //Cambiar velocidad
+        this.speedMs = newSpeedMs;
+        System.out.println("(SISTEMA) Velocidad del reloj actualizada a: " + newSpeedMs + " ms");
+    }
+    
     public void stopClock() { //Apagar el reloj cuando se detenga la simulacion
         this.running = false;
     }

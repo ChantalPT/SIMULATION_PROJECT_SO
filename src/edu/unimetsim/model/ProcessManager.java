@@ -21,8 +21,11 @@ public class ProcessManager {
     private int maxMemorySize;
     private int globalClock;
     private PCB currentProcess;
+    private String currentPolicy; // Puede ser "FCFS, RR, SRT, Prioridad, RMS y EDF"
+    private int quantum;          // Solo se usa si es "RR"
+    private int currentQuantumTicks; //Tiempo que lleva el proceso actual en el CPU
 
-    public ProcessManager(int maxMemorySize) { //se hace así para evitar romper el encapsulamiento
+    public ProcessManager(int maxMemorySize, String initialPolicy, int quantum) { //se hace así para evitar romper el encapsulamiento
         this.maxMemorySize = maxMemorySize;    //solo el PrMa es dueño de las colas.
         this.globalClock = 0; 
         this.currentProcess = null; 
@@ -30,6 +33,9 @@ public class ProcessManager {
         this.blockedQueue = new LinkedList<>();
         this.queueReadySuspended = new Queue<>();
         this.blockedSuspendedQueue = new LinkedList<>();
+        this.currentPolicy = initialPolicy;
+        this.quantum = quantum;
+        this.currentQuantumTicks = 0;
     }
     
     //El proceso va a la RAM o al disco (ready o readySuspended)
@@ -49,10 +55,21 @@ public class ProcessManager {
     public void dispatch() { //De la cola de listos a la CPU.
         // Solo se despacha si la CPU está libre y hay alguien esperando en RAM
         if (currentProcess == null && !readyQueue.isEmpty()) {
-            PCB next = readyQueue.dequeue();
+            PCB next = extractBestProcess();
             next.setStatus(ProcessStatus.RUNNING);
             currentProcess = next;
+            currentQuantumTicks = 0;
             System.out.println("[Reloj " + globalClock + "] (CPU) - Dispatch: " + next.getName());
+        }
+    }
+    
+    private void preemptCurrentProcess() { //Expulsar del CPU por el fin de Quantum
+        if (currentProcess != null) {
+            System.out.println("[Reloj " + globalClock + "] (CPU -> RAM) - Fin de Quantum (RR): " + currentProcess.getName());
+            currentProcess.setStatus(ProcessStatus.READY);
+            readyQueue.enqueue(currentProcess); //Va al final de la cola de listos
+            currentProcess = null; //Se libera el CPU y 
+            currentQuantumTicks = 0;//reinicia el contador
         }
     }
 
@@ -61,11 +78,22 @@ public class ProcessManager {
         checkBlocked();
         if (currentProcess != null) { //Se ejecuta 1 ciclo si hay un proceso en el CPU
             currentProcess.executeCycle();
+            currentQuantumTicks++; //Tiempo que lleva en el CPU
             if (currentProcess.isFinished()) {
                 currentProcess.setStatus(ProcessStatus.TERMINATED);
-                System.out.println("[Reloj " + globalClock + "] Terminado: " + currentProcess.getName());             
+                System.out.println("[Reloj " + globalClock + "] Terminado: " + currentProcess.getName());              
                 currentProcess = null;
+                currentQuantumTicks = 0; //Se reinicia el contador
                 checkSwapIn(); //Se checkea si existe un proceso que quiera entrar.
+            }
+            //Round Robin
+            else if (currentPolicy.equals("RR") && currentQuantumTicks >= quantum) {
+                preemptCurrentProcess(); //Si se acabo el tiempo se fuerza su salida
+            }
+            //SRT, Priority y EDF
+            else if (shouldPreemptCurrentProcess()) {
+                System.out.println("[Reloj " + globalClock + "] ¡INTERRUPCIÓN! Apropiación por política: " + currentPolicy);
+                preemptCurrentProcess(); // Lo botamos de la CPU
             }
         }
         if (currentProcess == null) {
@@ -145,8 +173,84 @@ public class ProcessManager {
             System.out.println("[Reloj " + globalClock + "] (Disco) - Desbloqueado: " + p.getName());
         }
     }
+    
+    private PCB extractBestProcess() {
+        if (readyQueue.isEmpty()) return null;
+
+        // Si es FCFS o Round Robin, se saca al primero 
+        if (currentPolicy.equals("FCFS") || currentPolicy.equals("RR")) {
+            return readyQueue.dequeue(); 
+        }
+
+        // Para SRT, Priority, EDF tenemos se evalua cada proceso
+        PCB best = readyQueue.dequeue();
+        Queue<PCB> tempQueue = new Queue<>();
+
+        while (!readyQueue.isEmpty()) {
+            PCB candidate = readyQueue.dequeue();
+            boolean isBetter = false;
+
+            switch (currentPolicy) {
+                case "SRT":
+                    if (candidate.getRemainingTime() < best.getRemainingTime()) isBetter = true;
+                    break;
+                case "PRIORITY": //1>prioridad // 5<prioridad
+                    if (candidate.getPriority() < best.getPriority()) isBetter = true;
+                    break;
+                case "EDF":
+                    if (candidate.getDeadline() < best.getDeadline()) isBetter = true;
+                    break;
+            }
+
+            if (isBetter) {
+                tempQueue.enqueue(best); 
+                best = candidate;        
+            } else {
+                tempQueue.enqueue(candidate);
+            }
+        }
+
+        //Se devuelve a todos los demás a la cola de listos original
+        while (!tempQueue.isEmpty()) {
+            readyQueue.enqueue(tempQueue.dequeue());
+        }
+
+        return best;
+    }
+    
+    private boolean shouldPreemptCurrentProcess() { //Se debe cambiar quien usa el CPU?
+        if (readyQueue.isEmpty() || currentProcess == null) return false; 
+        //FCFS no expulsa a nadie, y RR se expulsa por Quantum, no por quién está en la cola.
+        if (currentPolicy.equals("FCFS") || currentPolicy.equals("RR")) return false;
+                                                    //Se revisa la cola de listos
+        boolean needsPreemption = false;            //si existe alguien que merezca mas el CPU
+        Queue<PCB> tempQueue = new Queue<>();       //que el proceso actual.
+
+        //Se revisam a todos los procesos
+        while (!readyQueue.isEmpty()) {
+            PCB candidate = readyQueue.dequeue();
+            
+            if (currentPolicy.equals("SRT") && candidate.getRemainingTime() < currentProcess.getRemainingTime()) needsPreemption = true;
+            if (currentPolicy.equals("PRIORITY") && candidate.getPriority() < currentProcess.getPriority()) needsPreemption = true;
+            if (currentPolicy.equals("EDF") && candidate.getDeadline() < currentProcess.getDeadline()) needsPreemption = true;
+            
+            tempQueue.enqueue(candidate);
+        }
+
+        while (!tempQueue.isEmpty()) {
+            readyQueue.enqueue(tempQueue.dequeue());
+        }
+
+        return needsPreemption;
+    }
 
     //Getters y Setters.
+    public void setPolicy(String newPolicy, int newQuantum) {
+        this.currentPolicy = newPolicy;
+        this.quantum = newQuantum;
+        this.currentQuantumTicks = 0; // Reiniciamos la cuenta al cambiar
+        System.out.println("(SISTEMA) Cambio de política de planificación a: " + newPolicy);
+    }
     public Queue<PCB> getReadyQueue() {
         return readyQueue;
     }

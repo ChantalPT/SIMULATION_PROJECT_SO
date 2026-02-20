@@ -250,7 +250,16 @@ public class SimulatorWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEmergencyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmergencyActionPerformed
-        // TODO add your handling code here:
+        Thread interruptThread = new Thread(() -> { //Crear thread para la interrupcion
+            if (kernel != null) {
+                kernel.triggerEmergencyInterrupt(); //Alarma al kernel
+                
+                javax.swing.SwingUtilities.invokeLater(() -> { //Se fuerza a la pantalla para que 
+                    refreshMissionControl();                   //se actualice y se vea el cambio
+                }); 
+            }
+        });
+        interruptThread.start();
     }//GEN-LAST:event_btnEmergencyActionPerformed
 
     /**

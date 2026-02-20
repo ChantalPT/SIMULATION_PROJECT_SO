@@ -63,6 +63,8 @@ public class ProcessManager {
         }
     }
     
+    
+    
     private void preemptCurrentProcess() { //Expulsar del CPU por el fin de Quantum
         if (currentProcess != null) {
             System.out.println("[Reloj " + globalClock + "] (CPU -> RAM) - Fin de Quantum (RR): " + currentProcess.getName());
@@ -72,34 +74,64 @@ public class ProcessManager {
             currentQuantumTicks = 0;//reinicia el contador
         }
     }
+    
+    //Cambiar los 5 algoritmos
+    private void dispatchNextProcess() {
+        if (readyQueue.isEmpty()) return; 
+        PCB nextProcess = null;
+        switch (currentPolicy) {
+            case "FCFS":
+                // First Come First Serve (Listo)
+                nextProcess = readyQueue.dequeue();
+                break;
+            case "RR":
+                // Round Robin
+                break;
+            case "SRT":
+                // Shortest Remaining Time
+                break;
+            case "Prioridad":
+                // Prioridad Estática Preemptiva
+                break;
+            case "EDF":
+                // Earliest Deadline First
+                break;
+            default:
+                nextProcess = readyQueue.dequeue();
+                break;
+        }
 
-    public void runCycle() {
+        if (nextProcess != null) {
+            this.currentProcess = nextProcess;
+            this.currentProcess.setStatus(ProcessStatus.RUNNING);
+            System.out.println("[Reloj " + globalClock + "] (CPU) - Dispatch (" + currentPolicy + "): " + this.currentProcess.getName());
+        }
+    }
+    
+    
+
+public void runCycle() {
         globalClock++; 
+        
         checkBlocked(); //checkear si alguien termino su I/O
         checkSwapOut(); //checkear si hay que sacar a alguien de bloqueado al disco para ganar espacio
         checkSwapIn();  //checkear si no hay espacio en la RAM para buscar a alguien del disco
-        if (currentProcess != null) { //Se ejecuta 1 ciclo si hay un proceso en el CPU
-            currentProcess.executeCycle();
-            currentQuantumTicks++; //Tiempo que lleva en el CPU
-            if (currentProcess.isFinished()) {
-                currentProcess.setStatus(ProcessStatus.TERMINATED);
-                System.out.println("[Reloj " + globalClock + "] Terminado: " + currentProcess.getName());              
-                currentProcess = null;
-                currentQuantumTicks = 0; //Se reinicia el contador
-                checkSwapIn(); //Se checkea si existe un proceso que quiera entrar.
-            }
-            //Round Robin
-            else if (currentPolicy.equals("RR") && currentQuantumTicks >= quantum) {
-                preemptCurrentProcess(); //Si se acabo el tiempo se fuerza su salida
-            }
-            //SRT, Priority y EDF
-            else if (shouldPreemptCurrentProcess()) {
-                System.out.println("[Reloj " + globalClock + "] ¡INTERRUPCIÓN! Apropiación por política: " + currentPolicy);
-                preemptCurrentProcess(); // Lo botamos de la CPU
-            }
-        }
+ 
+        // Si la CPU está vacía, se revisa a quien se va a meter
         if (currentProcess == null) {
-            dispatch();
+            dispatchNextProcess(); 
+        }
+        if (currentProcess != null) {
+            
+            // Le restamos 1 al tiempo restante del proceso
+            currentProcess.setRemainingTime(currentProcess.getRemainingTime() - 1);
+            
+            // Revisamos si el proceso ya terminó
+            if (currentProcess.getRemainingTime() <= 0) {
+                System.out.println("[Reloj " + globalClock + "] Terminado: " + currentProcess.getName());
+                currentProcess.setStatus(ProcessStatus.TERMINATED);
+                currentProcess = null; //Vaciar CPU
+            }
         }
     }
     
@@ -340,6 +372,15 @@ public class ProcessManager {
 
     public void setCurrentProcess(PCB currentProcess) {
         this.currentProcess = currentProcess;
+    }
+    
+    public String getCurrentPolicy() {
+        return this.currentPolicy;
+    }
+
+    public void setCurrentPolicy(String policy) {
+        this.currentPolicy = policy;
+        this.currentQuantumTicks = 0; //Reiniciar reloj del quantum por si acaso
     }
     
 }

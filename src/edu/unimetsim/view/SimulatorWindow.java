@@ -279,7 +279,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Title 1", "Title 2"
+                "PROCESS", "PRIORITY"
             }
         ));
         jScrollPane4.setViewportView(tblReadySuspended);
@@ -310,7 +310,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Title 1", "Title 2"
+                "PROCESS", "PRIORITY"
             }
         ));
         jScrollPane5.setViewportView(tblBlockedSuspended);

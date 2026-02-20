@@ -75,7 +75,9 @@ public class ProcessManager {
 
     public void runCycle() {
         globalClock++; 
-        checkBlocked();
+        checkBlocked(); //checkear si alguien termino su I/O
+        checkSwapOut(); //checkear si hay que sacar a alguien de bloqueado al disco para ganar espacio
+        checkSwapIn();  //checkear si no hay espacio en la RAM para buscar a alguien del disco
         if (currentProcess != null) { //Se ejecuta 1 ciclo si hay un proceso en el CPU
             currentProcess.executeCycle();
             currentQuantumTicks++; //Tiempo que lleva en el CPU
@@ -127,6 +129,20 @@ public class ProcessManager {
             processesInRam++; // Actualizar contador 
             System.out.println("[Reloj " + globalClock + "] (Disco->RAM) - Swap in: " + processFromDisk.getName());
         }
+    }
+    
+    private void checkSwapOut() {
+        //verificar espacio actual, se expulsan los procesos al disco si la RAM 
+        //está llena y hay procesos esperando por entrar
+        int processesInRam = readyQueue.getSize() + blockedQueue.getSize() + (currentProcess != null ? 1 : 0);
+        while (processesInRam >= maxMemorySize && !queueReadySuspended.isEmpty() && !blockedQueue.isEmpty());
+        PCB process = blockedQueue.getHead().getData(); //se elige el primer p de la cola de bloqueados en RAM
+        blockedQueue.remove(process); //se saca de la RAM
+        process.setStatus(ProcessStatus.BLOCKED_SUSPENDED);
+        blockedSuspendedQueue.add(process);
+        processesInRam--; //Se libera un espacio
+        
+        System.out.println("[Reloj " + globalClock + "] (RAM->Disco) - Swap out: " + process.getName() + " para liberar espacio.");
     }
 
     //Revisar que los procesos  que estaban esperando en I/O hayan terminado

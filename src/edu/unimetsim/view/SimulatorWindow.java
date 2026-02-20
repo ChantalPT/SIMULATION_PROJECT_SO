@@ -1,3 +1,5 @@
+package edu.unimetsim.view;
+
 
 import edu.unimetsim.model.PCB;
 import edu.unimetsim.model.ProcessManager;
@@ -21,6 +23,11 @@ public class SimulatorWindow extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SimulatorWindow.class.getName());
     private ProcessManager kernel; //Para que se entienda con el PM
 
+    
+    public void setKernel(ProcessManager kernel) {
+        this.kernel = kernel;
+        refreshMissionControl();
+    }
     /**
      * Creates new form SimulatorWindow
      */

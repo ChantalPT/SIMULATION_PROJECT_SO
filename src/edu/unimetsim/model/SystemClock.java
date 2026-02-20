@@ -4,6 +4,9 @@
  */
 package edu.unimetsim.model;
 
+import edu.unimetsim.view.SimulatorWindow;
+
+
 /**
  *
  * @author pinto
@@ -11,13 +14,15 @@ package edu.unimetsim.model;
 
 public class SystemClock extends Thread {
     private ProcessManager kernel;
-    private int speedMs; //Velocidad en milisegundos 
+    private int delay; //Velocidad en milisegundos 
     private boolean running;
+    private SimulatorWindow window;
 
-    public SystemClock(ProcessManager kernel, int speedMs) {
+    public SystemClock(ProcessManager kernel, int delay, SimulatorWindow window) {
         this.kernel = kernel;
-        this.speedMs = speedMs;
+        this.delay = delay;
         this.running = true;
+        this.window = window;
     }
 
     @Override
@@ -26,8 +31,11 @@ public class SystemClock extends Thread {
         
         while (running) {
             kernel.runCycle(); //Se ejecuta el ciclo del CPU y memoria
+            if (window != null) {
+                window.refreshMissionControl();
+            }
             try {
-                Thread.sleep(speedMs);  //Se pausa el hilo para simular el paso del tiempo real
+                Thread.sleep(delay);  //Se pausa el hilo para simular el paso del tiempo real
             } catch (InterruptedException e) {
                 System.out.println("(SISTEMA) El reloj fue interrumpido.");
                 break;
@@ -37,7 +45,7 @@ public class SystemClock extends Thread {
     }
     
     public void setSpeedMs(int newSpeedMs) { //Cambiar velocidad
-        this.speedMs = newSpeedMs;
+        this.delay = newSpeedMs;
         System.out.println("(SISTEMA) Velocidad del reloj actualizada a: " + newSpeedMs + " ms");
     }
     

@@ -107,8 +107,6 @@ public class ProcessManager {
             System.out.println("[Reloj " + globalClock + "] (CPU) - Dispatch (" + currentPolicy + "): " + this.currentProcess.getName());
         }
     }
-    
-    
 
 public void runCycle() {
         globalClock++; 

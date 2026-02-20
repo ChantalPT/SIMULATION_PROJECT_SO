@@ -59,6 +59,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
         tblBlocked = new javax.swing.JTable();
         btnEmergency = new javax.swing.JButton();
         lblClock = new javax.swing.JLabel();
+        stressTest = new javax.swing.JButton();
         pnlMemorySwap = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -171,6 +172,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
         lblClock.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblClock.setText("MISSION CLOCK: CYCLE 0");
 
+        stressTest.setText("STRESS TEST");
+        stressTest.addActionListener(this::stressTestActionPerformed);
+
         javax.swing.GroupLayout pnlMissionControlLayout = new javax.swing.GroupLayout(pnlMissionControl);
         pnlMissionControl.setLayout(pnlMissionControlLayout);
         pnlMissionControlLayout.setHorizontalGroup(
@@ -183,12 +187,16 @@ public class SimulatorWindow extends javax.swing.JFrame {
                         .addComponent(pnlReadyQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlMissionControlLayout.createSequentialGroup()
-                                .addComponent(pnlRunningProcess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18))
+                            .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(pnlMissionControlLayout.createSequentialGroup()
+                                    .addComponent(pnlRunningProcess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMissionControlLayout.createSequentialGroup()
+                                    .addComponent(btnEmergency)
+                                    .addGap(67, 67, 67)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMissionControlLayout.createSequentialGroup()
-                                .addComponent(btnEmergency)
-                                .addGap(67, 67, 67)))
+                                .addComponent(stressTest)
+                                .addGap(110, 110, 110)))
                         .addComponent(pnlBlockedQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -201,7 +209,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlMissionControlLayout.createSequentialGroup()
                         .addComponent(pnlRunningProcess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(64, 64, 64)
+                        .addGap(18, 18, 18)
+                        .addComponent(stressTest)
+                        .addGap(23, 23, 23)
                         .addComponent(btnEmergency))
                     .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(pnlBlockedQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -261,6 +271,20 @@ public class SimulatorWindow extends javax.swing.JFrame {
         });
         interruptThread.start();
     }//GEN-LAST:event_btnEmergencyActionPerformed
+
+    private void stressTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stressTestActionPerformed
+        if (kernel != null) {
+            System.out.println("\n[SISTEMA] Iniciando ingreso masivo de procesos");
+            
+            for (int i = 0; i < 20; i++) { //los 20 procesos
+                edu.unimetsim.model.PCB nuevoProceso = edu.unimetsim.model.ProcessGenerator.generateRandomProcess(kernel.getGlobalClock()); 
+                //Se le pasa el reloj del kernel (actual)
+                // Lo enviamos al cerebro
+                kernel.addProcess(nuevoProceso);
+            }
+            refreshMissionControl();
+        }
+    }//GEN-LAST:event_stressTestActionPerformed
 
     /**
      * @param args the command line arguments
@@ -349,6 +373,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
     private javax.swing.JPanel pnlMissionControl;
     private javax.swing.JPanel pnlReadyQueue;
     private javax.swing.JPanel pnlRunningProcess;
+    private javax.swing.JButton stressTest;
     private javax.swing.JTable tblBlocked;
     private javax.swing.JTable tblReady;
     // End of variables declaration//GEN-END:variables

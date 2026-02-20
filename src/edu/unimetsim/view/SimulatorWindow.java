@@ -61,6 +61,16 @@ public class SimulatorWindow extends javax.swing.JFrame {
         lblClock = new javax.swing.JLabel();
         stressTest = new javax.swing.JButton();
         pnlMemorySwap = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        barMemoryUsage = new javax.swing.JProgressBar();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        pnlReadySuspended = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblReadySuspended = new javax.swing.JTable();
+        pnlBlockedSuspended = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblBlockedSuspended = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -216,20 +226,135 @@ public class SimulatorWindow extends javax.swing.JFrame {
                     .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(pnlBlockedQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(pnlReadyQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap(158, Short.MAX_VALUE))
         );
 
         JTabbedPanel.addTab("MISSION CONTROL", pnlMissionControl);
+
+        barMemoryUsage.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        barMemoryUsage.setStringPainted(true);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel1.setText("MAIN MEMORY (RAM)");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
+        jLabel2.setText("MEMORY USAGE");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(barMemoryUsage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(47, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(38, 38, 38))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addGap(16, 16, 16)
+                .addComponent(barMemoryUsage, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
+
+        pnlReadySuspended.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "READY SUSPENDED ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 204, 255))); // NOI18N
+
+        tblReadySuspended.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        jScrollPane4.setViewportView(tblReadySuspended);
+
+        javax.swing.GroupLayout pnlReadySuspendedLayout = new javax.swing.GroupLayout(pnlReadySuspended);
+        pnlReadySuspended.setLayout(pnlReadySuspendedLayout);
+        pnlReadySuspendedLayout.setHorizontalGroup(
+            pnlReadySuspendedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlReadySuspendedLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlReadySuspendedLayout.setVerticalGroup(
+            pnlReadySuspendedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlReadySuspendedLayout.createSequentialGroup()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pnlBlockedSuspended.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCKED SUSPENDED", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 204, 255))); // NOI18N
+
+        tblBlockedSuspended.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        jScrollPane5.setViewportView(tblBlockedSuspended);
+
+        javax.swing.GroupLayout pnlBlockedSuspendedLayout = new javax.swing.GroupLayout(pnlBlockedSuspended);
+        pnlBlockedSuspended.setLayout(pnlBlockedSuspendedLayout);
+        pnlBlockedSuspendedLayout.setHorizontalGroup(
+            pnlBlockedSuspendedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBlockedSuspendedLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlBlockedSuspendedLayout.setVerticalGroup(
+            pnlBlockedSuspendedLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout pnlMemorySwapLayout = new javax.swing.GroupLayout(pnlMemorySwap);
         pnlMemorySwap.setLayout(pnlMemorySwapLayout);
         pnlMemorySwapLayout.setHorizontalGroup(
             pnlMemorySwapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 882, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMemorySwapLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(pnlReadySuspended, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(63, 63, 63)
+                .addComponent(pnlBlockedSuspended, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
         );
         pnlMemorySwapLayout.setVerticalGroup(
             pnlMemorySwapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 475, Short.MAX_VALUE)
+            .addGroup(pnlMemorySwapLayout.createSequentialGroup()
+                .addGroup(pnlMemorySwapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlMemorySwapLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(pnlMemorySwapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pnlBlockedSuspended, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(pnlMemorySwapLayout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(pnlReadySuspended, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(230, Short.MAX_VALUE))
         );
 
         JTabbedPanel.addTab("MEMORY & SWAP", pnlMemorySwap);
@@ -313,36 +438,37 @@ public class SimulatorWindow extends javax.swing.JFrame {
     
     // Método para refrescar la pantalla de Mission Control
     public void refreshMissionControl() {
-        if (kernel == null) return; // Evita errores si el kernel aún no ha arrancado
+        if (kernel == null) return; 
 
-        javax.swing.SwingUtilities.invokeLater(() -> {
+        javax.swing.SwingUtilities.invokeLater(() -> { //Para evitar que la pantalla se congele
             
-            //Se actualiza el CPU
+            //MISION CONTROL -----------------
+            //Actualizar: CPU 
             edu.unimetsim.model.PCB running = kernel.getCurrentProcess();
             if (running != null) {
-                lblCpuProcess.setText(running.getName());
+                lblCpuProcess.setText(running.getName()); //Se pide el nombre del proceso que se este ejecutandp
                 barCpuProgress.setMaximum(running.getTotalInstructions()); 
                 barCpuProgress.setValue(running.getTotalInstructions() - running.getRemainingTime());
                 lblCpuDeadline.setText("Deadline in: " + running.getDeadline() + " cycles");
             } else {
                 lblCpuProcess.setText("[IDLE - CPU Inactiva]");
-                barCpuProgress.setValue(0);
+                barCpuProgress.setValue(0); //Se vacia la barra pq no hay nadie
                 lblCpuDeadline.setText("Deadline in: -- cycles");
             }
 
-            //Se actualiza la tabla de listos
+            //Actualizar: tabla de listos (RAM)
             javax.swing.table.DefaultTableModel readyModel = (javax.swing.table.DefaultTableModel) tblReady.getModel();
-            readyModel.setRowCount(0); 
+            readyModel.setRowCount(0); //Borrar filas para agregar nuevas (y evitar duplicados)
             
-            //Se recorre la cola nodo por nodo
             edu.unimetsim.structures.Node<edu.unimetsim.model.PCB> currentReady = kernel.getReadyQueue().getHead();
-            while (currentReady != null) {
+            //Se usa currentReady pq si se usa dequeue se borra el proceso de la edd, cr sirve para leer la info
+            while (currentReady != null) {  // y se recorre hasta llegar a null sin danar la cola
                 edu.unimetsim.model.PCB p = currentReady.getData(); 
                 readyModel.addRow(new Object[]{ p.getName(), p.getPriority() });
                 currentReady = currentReady.getNext(); 
             }
 
-            //Se actualiza la tabla de bloqueados
+            //Actualizar: tabla de bloqueados (RAM)
             javax.swing.table.DefaultTableModel blockedModel = (javax.swing.table.DefaultTableModel) tblBlocked.getModel();
             blockedModel.setRowCount(0); 
             
@@ -352,29 +478,75 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 blockedModel.addRow(new Object[]{ p.getName(), p.getPriority() });
                 currentBlocked = currentBlocked.getNext();
             }
+
+            //MEMORY & SWAP -----------------
+            //Actualizar: barra (RAM)
+            //Total = Ready + blocked + 1 CPU (si esta ocupada) 
+            int procesosEnRam = kernel.getReadyQueue().getSize() + kernel.getBlockedQueue().getSize() + (running != null ? 1 : 0);
+            int capacidadMaxima = kernel.getMaxMemorySize(); 
+
+            if (capacidadMaxima > 0) {
+                int porcentaje = (int) (((double) procesosEnRam / capacidadMaxima) * 100); //double para que quede con decimales y no se redondee a 0
+                barMemoryUsage.setValue(porcentaje);
+                barMemoryUsage.setString("Memory Usage: " + porcentaje + "% (" + procesosEnRam + "/" + capacidadMaxima + ")");
+            }
+
+            //Actualizar: tabla ready-suspended (SWAP del DISCO)
+            //tabla de los que no cupieron en la RAM y esperan en el disco
+            javax.swing.table.DefaultTableModel rsModel = (javax.swing.table.DefaultTableModel) tblReadySuspended.getModel();
+            rsModel.setRowCount(0);
             
-            //Y se actualiza el reloj
+            edu.unimetsim.structures.Node<edu.unimetsim.model.PCB> currentRS = kernel.getQueueReadySuspended().getHead();
+            while (currentRS != null) {
+                edu.unimetsim.model.PCB p = currentRS.getData();
+                rsModel.addRow(new Object[]{ p.getName(), p.getStatus(), p.getPriority(), p.getDeadline() });
+                currentRS = currentRS.getNext();
+            }
+
+            //Actualizar: blocked-suspended (DISCO)
+            //Procesos que estaban en RAM, se bloquearon, y los expulsaron al disco por falta de espacio
+            javax.swing.table.DefaultTableModel bsModel = (javax.swing.table.DefaultTableModel) tblBlockedSuspended.getModel();
+            bsModel.setRowCount(0);
+            
+            edu.unimetsim.structures.Node<edu.unimetsim.model.PCB> currentBS = kernel.getBlockedSuspendedQueue().getHead();
+            while (currentBS != null) {
+                edu.unimetsim.model.PCB p = currentBS.getData();
+                bsModel.addRow(new Object[]{ p.getName(), p.getStatus(), p.getPriority(), p.getDeadline() });
+                currentBS = currentBS.getNext();
+            }
+
+            //RELOJ  -----------------
             lblClock.setText("MISSION CLOCK: Cycle " + kernel.getGlobalClock());
-        });
+        }); //Se actualiza
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane JTabbedPanel;
     private javax.swing.JProgressBar barCpuProgress;
+    private javax.swing.JProgressBar barMemoryUsage;
     private javax.swing.JButton btnEmergency;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel lblClock;
     private javax.swing.JLabel lblCpuDeadline;
     private javax.swing.JLabel lblCpuProcess;
     private javax.swing.JPanel pnlBlockedQueue;
+    private javax.swing.JPanel pnlBlockedSuspended;
     private javax.swing.JPanel pnlMemorySwap;
     private javax.swing.JPanel pnlMissionControl;
     private javax.swing.JPanel pnlReadyQueue;
+    private javax.swing.JPanel pnlReadySuspended;
     private javax.swing.JPanel pnlRunningProcess;
     private javax.swing.JButton stressTest;
     private javax.swing.JTable tblBlocked;
+    private javax.swing.JTable tblBlockedSuspended;
     private javax.swing.JTable tblReady;
+    private javax.swing.JTable tblReadySuspended;
     // End of variables declaration//GEN-END:variables
 }

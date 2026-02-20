@@ -135,14 +135,16 @@ public class ProcessManager {
         //verificar espacio actual, se expulsan los procesos al disco si la RAM 
         //está llena y hay procesos esperando por entrar
         int processesInRam = readyQueue.getSize() + blockedQueue.getSize() + (currentProcess != null ? 1 : 0);
-        while (processesInRam >= maxMemorySize && !queueReadySuspended.isEmpty() && !blockedQueue.isEmpty());
-        PCB process = blockedQueue.getHead().getData(); //se elige el primer p de la cola de bloqueados en RAM
-        blockedQueue.remove(process); //se saca de la RAM
-        process.setStatus(ProcessStatus.BLOCKED_SUSPENDED);
-        blockedSuspendedQueue.add(process);
-        processesInRam--; //Se libera un espacio
-        
-        System.out.println("[Reloj " + globalClock + "] (RAM->Disco) - Swap out: " + process.getName() + " para liberar espacio.");
+        while (processesInRam >= maxMemorySize && !queueReadySuspended.isEmpty() && blockedQueue.getHead() != null) {
+
+            PCB process = blockedQueue.getHead().getData(); //se elige el primer p de la cola de bloqueados en RAM
+            blockedQueue.remove(process); //se saca de la RAM
+            process.setStatus(ProcessStatus.BLOCKED_SUSPENDED);
+            blockedSuspendedQueue.add(process);
+            processesInRam--; //Se libera un espacio
+
+            System.out.println("[Reloj " + globalClock + "] (RAM->Disco) - Swap out: " + process.getName() + " para liberar espacio.");
+        }
     }
 
     //Revisar que los procesos  que estaban esperando en I/O hayan terminado
@@ -265,7 +267,7 @@ public class ProcessManager {
         if (this.currentProcess != null) {
             System.out.println("\n[ALERTA ROJA] Interrupción por micro-meteorito detectada!");
             System.out.println("Suspendiendo ejecución de: " + this.currentProcess.getName());
-            
+            this.currentProcess.setIoWait(10);//Se queda por 10 ciclos para verlo en interfaz
             this.currentProcess.setStatus(ProcessStatus.BLOCKED);
             this.blockedQueue.add(this.currentProcess); //Se cambia el proceso a la cola de bloqueados
             

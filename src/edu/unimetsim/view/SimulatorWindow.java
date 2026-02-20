@@ -186,7 +186,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
         stressTest.setText("STRESS TEST");
         stressTest.addActionListener(this::stressTestActionPerformed);
 
-        cmbAlgorithms.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "RR", "SRT", "EDF", "Priority" }));
+        cmbAlgorithms.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "RR", "SRT", "EDF", "PRIORITY" }));
         cmbAlgorithms.addActionListener(this::cmbAlgorithmsActionPerformed);
 
         javax.swing.GroupLayout pnlMissionControlLayout = new javax.swing.GroupLayout(pnlMissionControl);

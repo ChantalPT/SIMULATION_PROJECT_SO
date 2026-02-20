@@ -369,7 +369,7 @@
                         <StringItem index="1" value="RR"/>
                         <StringItem index="2" value="SRT"/>
                         <StringItem index="3" value="EDF"/>
-                        <StringItem index="4" value="Priority"/>
+                        <StringItem index="4" value="PRIORITY"/>
                       </StringArray>
                     </Property>
                   </Properties>

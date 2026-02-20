@@ -74,39 +74,6 @@ public class ProcessManager {
             currentQuantumTicks = 0;//reinicia el contador
         }
     }
-    
-    //Cambiar los 5 algoritmos
-    private void dispatchNextProcess() {
-        if (readyQueue.isEmpty()) return; 
-        PCB nextProcess = null;
-        switch (currentPolicy) {
-            case "FCFS":
-                // First Come First Serve (Listo)
-                nextProcess = readyQueue.dequeue();
-                break;
-            case "RR":
-                // Round Robin
-                break;
-            case "SRT":
-                // Shortest Remaining Time
-                break;
-            case "Prioridad":
-                // Prioridad Estática Preemptiva
-                break;
-            case "EDF":
-                // Earliest Deadline First
-                break;
-            default:
-                nextProcess = readyQueue.dequeue();
-                break;
-        }
-
-        if (nextProcess != null) {
-            this.currentProcess = nextProcess;
-            this.currentProcess.setStatus(ProcessStatus.RUNNING);
-            System.out.println("[Reloj " + globalClock + "] (CPU) - Dispatch (" + currentPolicy + "): " + this.currentProcess.getName());
-        }
-    }
 
 public void runCycle() {
         globalClock++; 
@@ -117,18 +84,30 @@ public void runCycle() {
  
         // Si la CPU está vacía, se revisa a quien se va a meter
         if (currentProcess == null) {
-            dispatchNextProcess(); 
+            dispatch(); 
         }
         if (currentProcess != null) {
             
             // Le restamos 1 al tiempo restante del proceso
             currentProcess.setRemainingTime(currentProcess.getRemainingTime() - 1);
             
+            if (currentPolicy.equals("RR")){
+                currentQuantumTicks++;
+            }
             // Revisamos si el proceso ya terminó
             if (currentProcess.getRemainingTime() <= 0) {
                 System.out.println("[Reloj " + globalClock + "] Terminado: " + currentProcess.getName());
                 currentProcess.setStatus(ProcessStatus.TERMINATED);
                 currentProcess = null; //Vaciar CPU
+                currentQuantumTicks = 0;
+            }
+            else if (currentPolicy.equals("RR") && currentQuantumTicks >= quantum) {
+                System.out.println("[Reloj " + globalClock + "] (CPU) - Quantum Finalizado: " + currentProcess.getName() + "vualve a la final.");
+                currentProcess.setStatus(ProcessStatus.READY); //Cambia a listo
+                readyQueue.enqueue(currentProcess);//Va al final de la cola de listos
+                currentProcess = null;
+                currentQuantumTicks = 0;
+                
             }
         }
     }

@@ -145,6 +145,23 @@ public class ProcessManager {
             System.out.println("[Reloj " + globalClock + "] (Disco) - Desbloqueado: " + p.getName());
         }
     }
+    
+    //Interrupciones de emergencia
+    public void triggerEmergencyInterrupt() {
+        if (this.currentProcess != null) {
+            System.out.println("\n[ALERTA ROJA] Interrupción por micro-meteorito detectada!");
+            System.out.println("Suspendiendo ejecución de: " + this.currentProcess.getName());
+            
+            this.currentProcess.setStatus(ProcessStatus.BLOCKED);
+            this.blockedQueue.add(this.currentProcess); //Se cambia el proceso a la cola de bloqueados
+            
+            //Se vacia el CPU para que el planificador coloque otro proceso en el próximo ciclo
+            this.currentProcess = null; 
+            
+        } else {
+            System.out.println("\n[ALERTA ROJA] Interrupción detectada, pero el CPU esta vacío.");
+        }
+    }
 
     //Getters y Setters.
     public Queue<PCB> getReadyQueue() {

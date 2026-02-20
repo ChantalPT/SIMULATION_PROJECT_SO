@@ -22,8 +22,9 @@ public class PCB {
     private int burstTime;      // Para calcular el RST (tiempo más corto)
     private int remainingTime;      // Tiempo restante de ejecución
     private int updateIoWait; // Ciclos que debe esperar en bloqueo
-    private int IOException; //aaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    private int IoException; //aaaaaaaaaaaaaaaaaaaaaaaaaaaa
     private String Bound; //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    
     public PCB(String name, int totalInstructions, int priority, int deadline, int arrivalTime) {
         this.id = idCounter++;
         this.name = name;
@@ -111,6 +112,10 @@ public class PCB {
     
     public void setIoWait(int ioWait) { 
         this.updateIoWait = ioWait; 
+    }
+    
+    public int getTotalInstructions() {
+        return totalInstructions;
     }
     
     @Override

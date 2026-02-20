@@ -1,3 +1,12 @@
+
+import edu.unimetsim.model.PCB;
+import edu.unimetsim.model.ProcessManager;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+import edu.unimetsim.structures.LinkedList;
+import edu.unimetsim.structures.Queue;
+import edu.unimetsim.structures.Node;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -10,6 +19,7 @@
 public class SimulatorWindow extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SimulatorWindow.class.getName());
+    private ProcessManager kernel; //Para que se entienda con el PM
 
     /**
      * Creates new form SimulatorWindow
@@ -32,23 +42,23 @@ public class SimulatorWindow extends javax.swing.JFrame {
         pnlMissionControl = new javax.swing.JPanel();
         pnlReadyQueue = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblReady = new javax.swing.JTable();
         pnlRunningProcess = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
-        jLabel2 = new javax.swing.JLabel();
+        lblCpuProcess = new javax.swing.JLabel();
+        barCpuProgress = new javax.swing.JProgressBar();
+        lblCpuDeadline = new javax.swing.JLabel();
         pnlBlockedQueue = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        tblBlocked = new javax.swing.JTable();
+        btnEmergency = new javax.swing.JButton();
+        lblClock = new javax.swing.JLabel();
         pnlMemorySwap = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         pnlReadyQueue.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "READY QUEUE", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 204, 255))); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblReady.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -59,7 +69,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 "PROCESS", "PRIORITY"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblReady);
 
         javax.swing.GroupLayout pnlReadyQueueLayout = new javax.swing.GroupLayout(pnlReadyQueue);
         pnlReadyQueue.setLayout(pnlReadyQueueLayout);
@@ -79,9 +89,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
 
         pnlRunningProcess.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "RUNNING PROCESS (CPU)", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 204, 255))); // NOI18N
 
-        jLabel1.setText("NO PROCESS");
+        lblCpuProcess.setText("NO PROCESS");
 
-        jLabel2.setText("DEADLINE IN: -- CYCLES");
+        lblCpuDeadline.setText("DEADLINE IN: -- CYCLES");
 
         javax.swing.GroupLayout pnlRunningProcessLayout = new javax.swing.GroupLayout(pnlRunningProcess);
         pnlRunningProcess.setLayout(pnlRunningProcessLayout);
@@ -89,33 +99,33 @@ public class SimulatorWindow extends javax.swing.JFrame {
             pnlRunningProcessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlRunningProcessLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(barCpuProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(27, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRunningProcessLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlRunningProcessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRunningProcessLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblCpuDeadline, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(70, 70, 70))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRunningProcessLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(lblCpuProcess)
                         .addGap(101, 101, 101))))
         );
         pnlRunningProcessLayout.setVerticalGroup(
             pnlRunningProcessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlRunningProcessLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(lblCpuProcess)
                 .addGap(18, 18, 18)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(barCpuProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
+                .addComponent(lblCpuDeadline)
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pnlBlockedQueue.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BLOCKED QUEUE (I/O)", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 204, 255))); // NOI18N
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblBlocked.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -126,7 +136,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 "PROCESS", "PRIORITY"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(tblBlocked);
 
         javax.swing.GroupLayout pnlBlockedQueueLayout = new javax.swing.GroupLayout(pnlBlockedQueue);
         pnlBlockedQueue.setLayout(pnlBlockedQueueLayout);
@@ -145,13 +155,14 @@ public class SimulatorWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jButton1.setBackground(new java.awt.Color(204, 0, 0));
-        jButton1.setText("EMERGENCY INTERRUPTION");
-        jButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        btnEmergency.setBackground(new java.awt.Color(204, 0, 0));
+        btnEmergency.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEmergency.setText("EMERGENCY INTERRUPTION");
+        btnEmergency.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnEmergency.addActionListener(this::btnEmergencyActionPerformed);
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel3.setText("MISSION CLOCK: CYCLE 0");
+        lblClock.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblClock.setText("MISSION CLOCK: CYCLE 0");
 
         javax.swing.GroupLayout pnlMissionControlLayout = new javax.swing.GroupLayout(pnlMissionControl);
         pnlMissionControl.setLayout(pnlMissionControlLayout);
@@ -160,7 +171,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
             .addGroup(pnlMissionControlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblClock, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlMissionControlLayout.createSequentialGroup()
                         .addComponent(pnlReadyQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -169,8 +180,8 @@ public class SimulatorWindow extends javax.swing.JFrame {
                                 .addComponent(pnlRunningProcess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMissionControlLayout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addGap(78, 78, 78)))
+                                .addComponent(btnEmergency)
+                                .addGap(67, 67, 67)))
                         .addComponent(pnlBlockedQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -178,13 +189,13 @@ public class SimulatorWindow extends javax.swing.JFrame {
             pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlMissionControlLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblClock, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlMissionControlLayout.createSequentialGroup()
                         .addComponent(pnlRunningProcess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(70, 70, 70)
-                        .addComponent(jButton1))
+                        .addGap(64, 64, 64)
+                        .addComponent(btnEmergency))
                     .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(pnlBlockedQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(pnlReadyQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -231,9 +242,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnEmergencyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmergencyActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnEmergencyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,23 +270,70 @@ public class SimulatorWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new SimulatorWindow().setVisible(true));
     }
+    
+    // Método para refrescar la pantalla de Mission Control
+    public void refreshMissionControl() {
+        if (kernel == null) return; // Evita errores si el kernel aún no ha arrancado
+
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            
+            //Se actualiza el CPU
+            edu.unimetsim.model.PCB running = kernel.getCurrentProcess();
+            if (running != null) {
+                lblCpuProcess.setText(running.getName());
+                barCpuProgress.setMaximum(running.getTotalInstructions()); 
+                barCpuProgress.setValue(running.getTotalInstructions() - running.getRemainingTime());
+                lblCpuDeadline.setText("Deadline in: " + running.getDeadline() + " cycles");
+            } else {
+                lblCpuProcess.setText("[IDLE - CPU Inactiva]");
+                barCpuProgress.setValue(0);
+                lblCpuDeadline.setText("Deadline in: -- cycles");
+            }
+
+            //Se actualiza la tabla de listos
+            javax.swing.table.DefaultTableModel readyModel = (javax.swing.table.DefaultTableModel) tblReady.getModel();
+            readyModel.setRowCount(0); 
+            
+            //Se recorre la cola nodo por nodo
+            edu.unimetsim.structures.Node<edu.unimetsim.model.PCB> currentReady = kernel.getReadyQueue().getHead();
+            while (currentReady != null) {
+                edu.unimetsim.model.PCB p = currentReady.getData(); 
+                readyModel.addRow(new Object[]{ p.getName(), p.getPriority() });
+                currentReady = currentReady.getNext(); 
+            }
+
+            //Se actualiza la tabla de bloqueados
+            javax.swing.table.DefaultTableModel blockedModel = (javax.swing.table.DefaultTableModel) tblBlocked.getModel();
+            blockedModel.setRowCount(0); 
+            
+            edu.unimetsim.structures.Node<edu.unimetsim.model.PCB> currentBlocked = kernel.getBlockedQueue().getHead();
+            while (currentBlocked != null) {
+                edu.unimetsim.model.PCB p = currentBlocked.getData();
+                blockedModel.addRow(new Object[]{ p.getName(), p.getPriority() });
+                currentBlocked = currentBlocked.getNext();
+            }
+            
+            //Y se actualiza el reloj
+            lblClock.setText("MISSION CLOCK: Cycle " + kernel.getGlobalClock());
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane JTabbedPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JProgressBar barCpuProgress;
+    private javax.swing.JButton btnEmergency;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JLabel lblClock;
+    private javax.swing.JLabel lblCpuDeadline;
+    private javax.swing.JLabel lblCpuProcess;
     private javax.swing.JPanel pnlBlockedQueue;
     private javax.swing.JPanel pnlMemorySwap;
     private javax.swing.JPanel pnlMissionControl;
     private javax.swing.JPanel pnlReadyQueue;
     private javax.swing.JPanel pnlRunningProcess;
+    private javax.swing.JTable tblBlocked;
+    private javax.swing.JTable tblReady;
     // End of variables declaration//GEN-END:variables
 }

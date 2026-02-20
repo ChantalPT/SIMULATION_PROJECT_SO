@@ -55,4 +55,8 @@ public class Queue<T> {
     public int getSize() {
         return size;
     }
+    
+    public Node<T> getHead() {
+        return head;
+    }
 }

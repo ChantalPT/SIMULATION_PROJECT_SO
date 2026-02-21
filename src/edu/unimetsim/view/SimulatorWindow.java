@@ -2,6 +2,7 @@ package edu.unimetsim.view;
 
 
 import edu.unimetsim.model.PCB;
+import edu.unimetsim.model.ProcessGenerator;
 import edu.unimetsim.model.ProcessManager;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -408,14 +409,16 @@ public class SimulatorWindow extends javax.swing.JFrame {
     private void stressTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stressTestActionPerformed
         if (kernel != null) {
             System.out.println("\n[SISTEMA] Iniciando ingreso masivo de procesos");
+            kernel.getMutex().acquire();
             
             for (int i = 0; i < 20; i++) { //los 20 procesos
-                edu.unimetsim.model.PCB nuevoProceso = edu.unimetsim.model.ProcessGenerator.generateRandomProcess(kernel.getGlobalClock()); 
+                PCB newProcess = ProcessGenerator.generateRandomProcess(kernel.getGlobalClock()); 
                 //Se le pasa el reloj del kernel (actual)
                 // Lo enviamos al cerebro
-                kernel.addProcess(nuevoProceso);
+                kernel.addProcess(newProcess);
             }
             refreshMissionControl();
+            kernel.getMutex().release();
         }
     }//GEN-LAST:event_stressTestActionPerformed
 

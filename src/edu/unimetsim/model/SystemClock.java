@@ -30,9 +30,14 @@ public class SystemClock extends Thread {
         System.out.println("Iniciando reloj del sistema");
         
         while (running) {
-            kernel.runCycle(); //Se ejecuta el ciclo del CPU y memoria
-            if (window != null) {
+            kernel.getMutex().acquire();
+            try {
+                kernel.runCycle(); //Se ejecuta el ciclo del CPU y memoria
+                if (window != null) {
                 window.refreshMissionControl();
+            } 
+            }finally {
+                kernel.getMutex().release();
             }
             try {
                 Thread.sleep(delay);  //Se pausa el hilo para simular el paso del tiempo real

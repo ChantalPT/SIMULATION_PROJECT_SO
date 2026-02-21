@@ -7,6 +7,7 @@ package edu.unimetsim.model;
 import edu.unimetsim.structures.LinkedList;
 import edu.unimetsim.structures.Node;
 import edu.unimetsim.structures.Queue;
+import edu.unimetsim.structures.Semaphore;
 
 /**
  *
@@ -24,6 +25,7 @@ public class ProcessManager {
     private String currentPolicy; // Puede ser "FCFS, RR, SRT, Prioridad, RMS y EDF"
     private int quantum;          // Solo se usa si es "RR"
     private int currentQuantumTicks; //Tiempo que lleva el proceso actual en el CPU
+    private Semaphore mutex = new Semaphore(1);
 
     public ProcessManager(int maxMemorySize, String initialPolicy, int quantum) { //se hace así para evitar romper el encapsulamiento
         this.maxMemorySize = maxMemorySize;    //solo el PrMa es dueño de las colas.
@@ -117,7 +119,7 @@ public void runCycle() {
  
         // Si la CPU está vacía, se revisa a quien se va a meter
         if (currentProcess == null) {
-            dispatchNextProcess(); 
+            dispatch(); 
         }
         if (currentProcess != null) {
             
@@ -308,6 +310,22 @@ public void runCycle() {
             System.out.println("\n[ALERTA ROJA] Interrupción detectada, pero el CPU esta vacío.");
         }
     }
+    
+    private void updateDeadlines() {
+        // 1. Revisar proceso en CPU
+        if (currentProcess != null) {
+            currentProcess.setDeadline(currentProcess.getDeadline() - 1);
+            if (currentProcess.getDeadline() <= 0) {
+                System.out.println("!!! MISIÓN FALLIDA (CPU): " + currentProcess.getName());
+                currentProcess.setStatus(ProcessStatus.TERMINATED); //estado FAILED
+                currentProcess = null;
+            }
+        }
+        // 2. Revisar colas (Esto es lo más importante)
+        // Deberías hacer lo mismo recorriendo la readyQueue y blockedQueue
+        // Si no tienes un iterador, usa un bucle que saque, reste y vuelva a meter 
+        // pero solo si tienes tiempo. Si no, con que baje en el CPU ya tienes algo.
+    }
 
     //Getters y Setters.
     public void setPolicy(String newPolicy, int newQuantum) {
@@ -380,5 +398,9 @@ public void runCycle() {
         this.currentPolicy = policy;
         this.currentQuantumTicks = 0; //Reiniciar reloj del quantum por si acaso
     }
+    
+    public Semaphore getMutex() {
+    return mutex;
+}
     
 }

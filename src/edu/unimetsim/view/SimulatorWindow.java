@@ -60,6 +60,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
         btnEmergency = new javax.swing.JButton();
         lblClock = new javax.swing.JLabel();
         stressTest = new javax.swing.JButton();
+        cmbAlgorithm = new javax.swing.JComboBox<>();
         pnlMemorySwap = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         barMemoryUsage = new javax.swing.JProgressBar();
@@ -185,6 +186,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
         stressTest.setText("STRESS TEST");
         stressTest.addActionListener(this::stressTestActionPerformed);
 
+        cmbAlgorithm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "RR", "SRT", "EDF", "PRIORITY" }));
+        cmbAlgorithm.addActionListener(this::cmbAlgorithmActionPerformed);
+
         javax.swing.GroupLayout pnlMissionControlLayout = new javax.swing.GroupLayout(pnlMissionControl);
         pnlMissionControl.setLayout(pnlMissionControlLayout);
         pnlMissionControlLayout.setHorizontalGroup(
@@ -202,7 +206,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
                                     .addComponent(pnlRunningProcess, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(18, 18, 18))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMissionControlLayout.createSequentialGroup()
-                                    .addComponent(btnEmergency)
+                                    .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(cmbAlgorithm, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnEmergency, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addGap(67, 67, 67)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMissionControlLayout.createSequentialGroup()
                                 .addComponent(stressTest)
@@ -222,7 +228,9 @@ public class SimulatorWindow extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(stressTest)
                         .addGap(23, 23, 23)
-                        .addComponent(btnEmergency))
+                        .addComponent(btnEmergency)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmbAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlMissionControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(pnlBlockedQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(pnlReadyQueue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -411,6 +419,10 @@ public class SimulatorWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_stressTestActionPerformed
 
+    private void cmbAlgorithmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbAlgorithmActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbAlgorithmActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -525,6 +537,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
     private javax.swing.JProgressBar barCpuProgress;
     private javax.swing.JProgressBar barMemoryUsage;
     private javax.swing.JButton btnEmergency;
+    private javax.swing.JComboBox<String> cmbAlgorithm;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
